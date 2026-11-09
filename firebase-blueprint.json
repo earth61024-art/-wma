@@ -1,0 +1,202 @@
+{
+  "entities": {
+    "school_info": {
+      "title": "School Infirmary Information",
+      "description": "Master metadata and operational details of Wat Mai Amataros School infirmary",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 200 },
+        "subdistrict": { "type": "string", "maxLength": 100 },
+        "district": { "type": "string", "maxLength": 100 },
+        "province": { "type": "string", "maxLength": 100 },
+        "affiliation": { "type": "string", "maxLength": 200 },
+        "motto": { "type": "string", "maxLength": 300 },
+        "roomLocation": { "type": "string", "maxLength": 200 },
+        "bedsTotal": { "type": "number" },
+        "bedsAvailable": { "type": "number" },
+        "nurseInCharge": { "type": "string", "maxLength": 150 },
+        "nursePosition": { "type": "string", "maxLength": 150 },
+        "assistantNurse": { "type": "string", "maxLength": 150 },
+        "assistantPosition": { "type": "string", "maxLength": 150 },
+        "operatingHours": { "type": "string", "maxLength": 100 },
+        "phoneSchool": { "type": "string", "maxLength": 50 },
+        "phoneClinicDirect": { "type": "string", "maxLength": 50 },
+        "emergencySpeedDial": { "type": "string", "maxLength": 20 }
+      },
+      "required": ["name", "district", "province", "nurseInCharge"]
+    },
+    "student": {
+      "title": "Student Health Profile",
+      "description": "Official student record including blood group and allergies",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "studentId": { "type": "string", "maxLength": 32, "pattern": "^[a-zA-Z0-9_-]+$" },
+        "citizenId": { "type": "string", "maxLength": 32 },
+        "fullName": { "type": "string", "maxLength": 150 },
+        "grade": { "type": "string", "maxLength": 20 },
+        "room": { "type": "string", "maxLength": 20 },
+        "gender": { "type": "string", "enum": ["ชาย", "หญิง"] },
+        "birthDate": { "type": "string", "maxLength": 30 },
+        "bloodType": { "type": "string", "enum": ["A", "B", "AB", "O", "ไม่ระบุ"] },
+        "congenitalDisease": { "type": "string", "maxLength": 500 },
+        "allergies": { "type": "string", "maxLength": 500 },
+        "parentName": { "type": "string", "maxLength": 150 },
+        "parentPhone": { "type": "string", "maxLength": 50 },
+        "emergencyContact": { "type": "string", "maxLength": 50 },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["studentId", "fullName", "grade", "room", "gender"]
+    },
+    "visit_record": {
+      "title": "Infirmary Visit Record",
+      "description": "Log of student visits to the infirmary for health treatment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string", "maxLength": 50 },
+        "date": { "type": "string", "maxLength": 30 },
+        "time": { "type": "string", "maxLength": 20 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentName": { "type": "string", "maxLength": 150 },
+        "grade": { "type": "string", "maxLength": 20 },
+        "room": { "type": "string", "maxLength": 20 },
+        "gender": { "type": "string", "enum": ["ชาย", "หญิง"] },
+        "bloodType": { "type": "string", "enum": ["A", "B", "AB", "O", "ไม่ระบุ"] },
+        "broughtBy": { "type": "string", "maxLength": 100 },
+        "companionName": { "type": "string", "maxLength": 150 },
+        "temperature": { "type": "number" },
+        "bloodPressure": { "type": "string", "maxLength": 30 },
+        "painLevel": { "type": "number" },
+        "symptoms": { "type": "array" },
+        "symptomDetail": { "type": "string", "maxLength": 1000 },
+        "actionsTaken": { "type": "array" },
+        "treatmentDetail": { "type": "string", "maxLength": 1000 },
+        "medicationGiven": { "type": "string", "maxLength": 500 },
+        "careResult": { "type": "string", "maxLength": 100 },
+        "bedNumber": { "type": "number" },
+        "parentNotified": { "type": "boolean" },
+        "parentContactName": { "type": "string", "maxLength": 150 },
+        "parentPhone": { "type": "string", "maxLength": 50 },
+        "referredTo": { "type": "string", "maxLength": 200 },
+        "followUpNeeded": { "type": "boolean" },
+        "followUpNotes": { "type": "string", "maxLength": 1000 },
+        "recordedBy": { "type": "string", "maxLength": 150 },
+        "syncedToGoogleSheet": { "type": "boolean" }
+      },
+      "required": ["date", "time", "studentName", "grade", "room", "gender", "careResult", "recordedBy"]
+    },
+    "health_notice": {
+      "title": "Health Notice",
+      "description": "School health advisories, cautions, and campaign notices",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 250 },
+        "date": { "type": "string", "maxLength": 30 },
+        "category": { "type": "string", "enum": ["ข่าวสาร", "เตือนภัยสุขภาพ", "กิจกรรม", "มาตรการ"] },
+        "summary": { "type": "string", "maxLength": 500 },
+        "detail": { "type": "string", "maxLength": 3000 },
+        "priority": { "type": "string", "enum": ["normal", "high", "urgent"] },
+        "badgeColor": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["title", "date", "category", "summary", "detail", "priority"]
+    },
+    "parent_submission": {
+      "title": "Parent Health Submission",
+      "description": "Parent self-reported student health history and allergy form",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 150 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "grade": { "type": "string", "maxLength": 20 },
+        "room": { "type": "string", "maxLength": 20 },
+        "bloodType": { "type": "string", "maxLength": 30 },
+        "congenital": { "type": "string", "maxLength": 500 },
+        "allergies": { "type": "string", "maxLength": 500 },
+        "parentName": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "emergencyPhone": { "type": "string", "maxLength": 50 },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "submittedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["studentName", "grade", "room", "parentName", "phone", "submittedAt"]
+    },
+    "emergency_step": {
+      "title": "Emergency Response Flow Step",
+      "description": "Step in the school 7-step emergency incident response flowchart",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "step": { "type": "number" },
+        "title": { "type": "string", "maxLength": 100 },
+        "icon": { "type": "string", "maxLength": 30 },
+        "desc": { "type": "string", "maxLength": 500 },
+        "color": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["step", "title", "desc"]
+    },
+    "emergency_guide": {
+      "title": "Emergency First Aid Guide",
+      "description": "Critical first-aid action guide and protocols for school emergencies",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200 },
+        "tag": { "type": "string", "maxLength": 100 },
+        "severity": { "type": "string", "maxLength": 50 },
+        "color": { "type": "string", "maxLength": 100 },
+        "action": { "type": "array" }
+      },
+      "required": ["title", "tag", "action"]
+    },
+    "emergency_contact": {
+      "title": "Emergency Contact Number",
+      "description": "Emergency speed-dial contact phone number",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "number": { "type": "string", "maxLength": 50 },
+        "type": { "type": "string", "maxLength": 100 },
+        "highlight": { "type": "boolean" }
+      },
+      "required": ["name", "number"]
+    }
+  },
+  "firestore": {
+    "/school_info/{infoId}": {
+      "schema": "school_info",
+      "description": "School and infirmary general information"
+    },
+    "/students/{studentDocId}": {
+      "schema": "student",
+      "description": "Official student health profiles and blood group registry"
+    },
+    "/visit_records/{recordId}": {
+      "schema": "visit_record",
+      "description": "Infirmary daily health care and symptom visit logs"
+    },
+    "/health_notices/{noticeId}": {
+      "schema": "health_notice",
+      "description": "School health announcements, cautions, and activity notices"
+    },
+    "/parent_submissions/{submissionId}": {
+      "schema": "parent_submission",
+      "description": "Student health survey submissions sent by parents"
+    },
+    "/emergency_steps/{stepId}": {
+      "schema": "emergency_step",
+      "description": "Emergency incident response flowchart steps"
+    },
+    "/emergency_guides/{guideId}": {
+      "schema": "emergency_guide",
+      "description": "Emergency first aid action guides"
+    },
+    "/emergency_contacts/{contactId}": {
+      "schema": "emergency_contact",
+      "description": "Emergency speed-dial phone numbers"
+    }
+  }
+}

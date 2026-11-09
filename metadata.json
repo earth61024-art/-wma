@@ -1,0 +1,6 @@
+{
+  "name": "ห้องพยาบาล โรงเรียนวัดใหม่อมตรส",
+  "description": "ดูแลสุขภาพ ใส่ใจนักเรียน ปลอดภัยทุกวัน - ระบบบริการห้องพยาบาล บันทึกสุขภาพ และแดชบอร์ดสถิติ โรงเรียนวัดใหม่อมตรส",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

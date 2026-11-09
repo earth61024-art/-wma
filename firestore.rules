@@ -1,0 +1,174 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default Deny Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Connection check document
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    // 1. School Information
+    function isValidSchoolInfo(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+             data.district is string && data.district.size() <= 100 &&
+             data.province is string && data.province.size() <= 100 &&
+             data.nurseInCharge is string && data.nurseInCharge.size() <= 150 &&
+             (!('phoneSchool' in data) || (data.phoneSchool is string && data.phoneSchool.size() <= 50)) &&
+             (!('bedsTotal' in data) || data.bedsTotal is number) &&
+             (!('bedsAvailable' in data) || data.bedsAvailable is number);
+    }
+
+    match /school_info/{infoId} {
+      allow get: if isValidId(infoId);
+      allow list: if true;
+      allow create, update: if isValidId(infoId) && isValidSchoolInfo(incoming());
+      allow delete: if isValidId(infoId);
+    }
+
+    // 2. Students Roster
+    function isValidStudent(data) {
+      return data.studentId is string && data.studentId.size() > 0 && data.studentId.size() <= 32 && data.studentId.matches('^[a-zA-Z0-9_\\-]+$') &&
+             data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 150 &&
+             data.grade is string && data.grade.size() <= 20 &&
+             data.room is string && data.room.size() <= 20 &&
+             data.gender in ['ชาย', 'หญิง'] &&
+             (!('bloodType' in data) || data.bloodType in ['A', 'B', 'AB', 'O', 'ไม่ระบุ']) &&
+             (!('congenitalDisease' in data) || (data.congenitalDisease is string && data.congenitalDisease.size() <= 500)) &&
+             (!('allergies' in data) || (data.allergies is string && data.allergies.size() <= 500)) &&
+             (!('parentPhone' in data) || (data.parentPhone is string && data.parentPhone.size() <= 50));
+    }
+
+    match /students/{studentDocId} {
+      allow get: if isValidId(studentDocId);
+      allow list: if true;
+      allow create: if isValidId(studentDocId) && isValidStudent(incoming());
+      allow update: if isValidId(studentDocId) && isValidStudent(incoming());
+      allow delete: if isValidId(studentDocId);
+    }
+
+    // 3. Visit Records
+    function isValidVisitRecord(data) {
+      return data.studentName is string && data.studentName.size() > 0 && data.studentName.size() <= 150 &&
+             data.grade is string && data.grade.size() <= 20 &&
+             data.room is string && data.room.size() <= 20 &&
+             data.gender in ['ชาย', 'หญิง'] &&
+             (!('bloodType' in data) || data.bloodType in ['A', 'B', 'AB', 'O', 'ไม่ระบุ']) &&
+             data.careResult is string && data.careResult.size() <= 100 &&
+             data.recordedBy is string && data.recordedBy.size() <= 150 &&
+             (!('temperature' in data) || data.temperature is number) &&
+             (!('symptoms' in data) || (data.symptoms is list && data.symptoms.size() <= 30)) &&
+             (!('actionsTaken' in data) || (data.actionsTaken is list && data.actionsTaken.size() <= 30)) &&
+             (!('symptomDetail' in data) || (data.symptomDetail is string && data.symptomDetail.size() <= 1000)) &&
+             (!('treatmentDetail' in data) || (data.treatmentDetail is string && data.treatmentDetail.size() <= 1000));
+    }
+
+    match /visit_records/{recordId} {
+      allow get: if isValidId(recordId);
+      allow list: if true;
+      allow create: if isValidId(recordId) && isValidVisitRecord(incoming());
+      allow update: if isValidId(recordId) && isValidVisitRecord(incoming());
+      allow delete: if isValidId(recordId);
+    }
+
+    // 4. Health Notices
+    function isValidHealthNotice(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 250 &&
+             data.date is string && data.date.size() <= 30 &&
+             data.category in ['ข่าวสาร', 'เตือนภัยสุขภาพ', 'กิจกรรม', 'มาตรการ'] &&
+             data.summary is string && data.summary.size() <= 500 &&
+             data.detail is string && data.detail.size() <= 3000 &&
+             data.priority in ['normal', 'high', 'urgent'];
+    }
+
+    match /health_notices/{noticeId} {
+      allow get: if isValidId(noticeId);
+      allow list: if true;
+      allow create: if isValidId(noticeId) && isValidHealthNotice(incoming());
+      allow update: if isValidId(noticeId) && isValidHealthNotice(incoming());
+      allow delete: if isValidId(noticeId);
+    }
+
+    // 5. Parent Submissions
+    function isValidParentSubmission(data) {
+      return data.studentName is string && data.studentName.size() > 0 && data.studentName.size() <= 150 &&
+             data.grade is string && data.grade.size() <= 20 &&
+             data.room is string && data.room.size() <= 20 &&
+             data.parentName is string && data.parentName.size() <= 150 &&
+             data.phone is string && data.phone.size() <= 50 &&
+             data.submittedAt is string && data.submittedAt.size() <= 50 &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000));
+    }
+
+    match /parent_submissions/{submissionId} {
+      allow get: if isValidId(submissionId);
+      allow list: if true;
+      allow create: if isValidId(submissionId) && isValidParentSubmission(incoming());
+      allow update: if isValidId(submissionId) && isValidParentSubmission(incoming());
+      allow delete: if isValidId(submissionId);
+    }
+
+    // 6. Emergency Flow Steps
+    function isValidEmergencyStep(data) {
+      return data.step is number &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 100 &&
+             data.desc is string && data.desc.size() <= 500 &&
+             (!('icon' in data) || (data.icon is string && data.icon.size() <= 30));
+    }
+
+    match /emergency_steps/{stepId} {
+      allow get: if isValidId(stepId);
+      allow list: if true;
+      allow create, update: if isValidId(stepId) && isValidEmergencyStep(incoming());
+      allow delete: if isValidId(stepId);
+    }
+
+    // 7. Emergency Guides
+    function isValidEmergencyGuide(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.tag is string && data.tag.size() <= 100 &&
+             (!('action' in data) || (data.action is list && data.action.size() <= 30));
+    }
+
+    match /emergency_guides/{guideId} {
+      allow get: if isValidId(guideId);
+      allow list: if true;
+      allow create, update: if isValidId(guideId) && isValidEmergencyGuide(incoming());
+      allow delete: if isValidId(guideId);
+    }
+
+    // 8. Emergency Contacts
+    function isValidEmergencyContact(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 150 &&
+             data.number is string && data.number.size() > 0 && data.number.size() <= 50;
+    }
+
+    match /emergency_contacts/{contactId} {
+      allow get: if isValidId(contactId);
+      allow list: if true;
+      allow create, update: if isValidId(contactId) && isValidEmergencyContact(incoming());
+      allow delete: if isValidId(contactId);
+    }
+  }
+}
