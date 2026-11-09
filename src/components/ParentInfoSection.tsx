@@ -380,11 +380,17 @@ export const ParentInfoSection: React.FC = () => {
             </div>
             <button
               type="button"
-              onClick={() => window.print()}
-              className="p-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5"
+              onClick={() => {
+                document.body.classList.add('printing-parent-form');
+                window.print();
+                setTimeout(() => {
+                  document.body.classList.remove('printing-parent-form');
+                }, 1000);
+              }}
+              className="p-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
-              <Printer className="w-4 h-4" />
-              <span className="hidden sm:inline">พิมพ์แบบฟอร์ม</span>
+              <Printer className="w-4 h-4 text-[#2A9D8F]" />
+              <span className="hidden sm:inline">พิมพ์แบบฟอร์มข้อมูลสุขภาพ</span>
             </button>
           </div>
 
@@ -438,9 +444,23 @@ export const ParentInfoSection: React.FC = () => {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmitHealthForm} className="space-y-5 text-xs sm:text-sm">
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
-                <div className="sm:col-span-6">
+            <div id="printable-parent-form" className="bg-white rounded-2xl p-2 sm:p-4 space-y-4">
+              {/* Print-only school header */}
+              <div className="hidden print:block text-center border-b border-slate-300 pb-3 mb-3">
+                <h3 className="text-base font-bold text-slate-900">
+                  แบบฟอร์มแจ้งข้อมูลสุขภาพและประวัติการแพ้ของนักเรียน
+                </h3>
+                <p className="text-xs text-slate-600">
+                  ห้องพยาบาล โรงเรียนวัดใหม่อมตรส • {schoolInfo.affiliation || 'สํานักงานเขตพระนคร กรุงเทพมหานคร สังกัด กทม.'}
+                </p>
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  ปีการศึกษา {schoolInfo.academicYear || '2569'} • ผู้ดูแลห้องพยาบาล: {schoolInfo.nurseInCharge}
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmitHealthForm} className="space-y-5 text-xs sm:text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                  <div className="sm:col-span-6">
                   <label className="block font-semibold text-slate-700 mb-1">
                     ชื่อ - นามสกุล นักเรียน <span className="text-rose-500">*</span>
                   </label>
@@ -593,7 +613,7 @@ export const ParentInfoSection: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-3 border-t border-slate-100">
+              <div className="flex justify-end pt-3 border-t border-slate-100 print:hidden">
                 <button
                   type="submit"
                   className="px-6 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867a] text-white font-bold text-xs sm:text-sm shadow-xs transition-colors flex items-center gap-2"
@@ -602,7 +622,26 @@ export const ParentInfoSection: React.FC = () => {
                   <span>บันทึกข้อมูลสุขภาพเข้าสู่ระบบ</span>
                 </button>
               </div>
+
+              {/* Print-only signature section */}
+              <div className="hidden print:grid grid-cols-2 gap-8 pt-8 mt-6 border-t border-slate-300 text-center text-xs text-slate-600">
+                <div>
+                  <div className="border-b border-dashed border-slate-400 pb-1 mb-1 font-semibold text-slate-800">
+                    ({parentName || '...................................................'})
+                  </div>
+                  <span>ลงชื่อผู้ปกครอง / ผู้ให้ข้อมูล</span>
+                  <div className="text-[10px] text-slate-400 mt-0.5">เบอร์โทร: {phone || '.........................'}</div>
+                </div>
+                <div>
+                  <div className="border-b border-dashed border-slate-400 pb-1 mb-1 font-semibold text-slate-800">
+                    ({schoolInfo.nurseInCharge || '...................................................'})
+                  </div>
+                  <span>ครูผู้รับบันทึกข้อมูลห้องพยาบาล</span>
+                  <div className="text-[10px] text-slate-400 mt-0.5">{schoolInfo.roomLocation}</div>
+                </div>
+              </div>
             </form>
+          </div>
           )}
         </div>
       )}

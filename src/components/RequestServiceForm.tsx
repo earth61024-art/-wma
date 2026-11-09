@@ -12,9 +12,11 @@ import {
   Sparkles,
   RotateCcw,
   Search,
+  Printer,
 } from 'lucide-react';
 import { useInfirmary } from '../context/InfirmaryContext';
 import { GradeLevel, SymptomType, ServiceAction, VisitRecord, StudentProfile } from '../types';
+import { PrintSlipModal } from './PrintSlipModal';
 
 interface RequestServiceFormProps {
   onNavigate: (tab: string) => void;
@@ -77,15 +79,19 @@ export const RequestServiceForm: React.FC<RequestServiceFormProps> = ({ onNaviga
   const [parentPhone, setParentPhone] = useState('');
 
   const [submittedRecord, setSubmittedRecord] = useState<VisitRecord | null>(null);
+  const [isPrintingSlip, setIsPrintingSlip] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   // Autocomplete / Search for students in official roster
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const sTerm = studentName.toLowerCase().trim();
   const matchingStudents = students.filter(
     (s) =>
-      studentName.trim() &&
-      (s.fullName.toLowerCase().includes(studentName.toLowerCase()) ||
-        s.studentId.includes(studentName.trim()))
+      sTerm &&
+      ((s.fullName || '').toLowerCase().includes(sTerm) ||
+        (s.studentId || '').toLowerCase().includes(sTerm) ||
+        (s.citizenId && s.citizenId.toLowerCase().includes(sTerm)) ||
+        `${s.grade}/${s.room}`.toLowerCase().includes(sTerm))
   );
 
   const handleSelectStudent = (std: StudentProfile) => {
@@ -271,8 +277,17 @@ export const RequestServiceForm: React.FC<RequestServiceFormProps> = ({ onNaviga
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
+              type="button"
+              onClick={() => setIsPrintingSlip(true)}
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <Printer className="w-4 h-4" />
+              <span>พิมพ์ใบแจ้งผลการดูแล (Sick Note Slip)</span>
+            </button>
+
+            <button
               onClick={() => onNavigate('records')}
-              className="px-6 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867a] text-white font-semibold text-xs sm:text-sm shadow-xs transition-colors flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867a] text-white font-semibold text-xs sm:text-sm shadow-xs transition-colors flex items-center gap-2"
             >
               <span>ดูในระบบบันทึกเวชระเบียน</span>
               <ArrowRight className="w-4 h-4" />
@@ -280,7 +295,7 @@ export const RequestServiceForm: React.FC<RequestServiceFormProps> = ({ onNaviga
 
             <button
               onClick={() => onNavigate('dashboard')}
-              className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm transition-colors"
+              className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm transition-colors"
             >
               ดูสถิติใน Dashboard
             </button>
@@ -293,6 +308,14 @@ export const RequestServiceForm: React.FC<RequestServiceFormProps> = ({ onNaviga
               <span>แจ้งขอรับบริการเพิ่ม</span>
             </button>
           </div>
+
+          {/* Print Slip Modal */}
+          {isPrintingSlip && (
+            <PrintSlipModal
+              record={submittedRecord}
+              onClose={() => setIsPrintingSlip(false)}
+            />
+          )}
         </div>
       </div>
     );

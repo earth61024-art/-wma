@@ -313,20 +313,53 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       (s.academicYear ? s.academicYear === rosterYearFilter : rosterYearFilter === (schoolInfo.academicYear || '2569'));
     const matchesStatus =
       rosterStatusFilter === 'all' || (s.status ? s.status === rosterStatusFilter : rosterStatusFilter === 'กำลังศึกษา');
+    const sTerm = rosterSearch.toLowerCase().trim();
     const matchesSearch =
-      s.fullName.toLowerCase().includes(rosterSearch.toLowerCase()) ||
-      s.studentId.includes(rosterSearch.trim()) ||
-      (s.citizenId && s.citizenId.includes(rosterSearch.trim()));
+      !sTerm ||
+      (s.fullName || '').toLowerCase().includes(sTerm) ||
+      (s.studentId || '').toLowerCase().includes(sTerm) ||
+      (s.citizenId && s.citizenId.toLowerCase().includes(sTerm)) ||
+      (s.grade || '').toLowerCase().includes(sTerm) ||
+      (s.room || '').toLowerCase().includes(sTerm) ||
+      `${s.grade}/${s.room}`.toLowerCase().includes(sTerm) ||
+      (s.gender || '').toLowerCase().includes(sTerm) ||
+      (s.bloodType || '').toLowerCase().includes(sTerm) ||
+      (s.congenitalDisease || '').toLowerCase().includes(sTerm) ||
+      (s.allergies || '').toLowerCase().includes(sTerm) ||
+      (s.parentName || '').toLowerCase().includes(sTerm) ||
+      (s.parentPhone || '').toLowerCase().includes(sTerm) ||
+      (s.academicYear || '').toLowerCase().includes(sTerm) ||
+      (s.status || '').toLowerCase().includes(sTerm);
     return matchesGrade && matchesYear && matchesStatus && matchesSearch;
   });
 
   // Filter visit records for Dashboard Records tab (Supports Date, Month, Year filters)
   const filteredDashboardRecords = records.filter((r) => {
+    const sTerm = recordSearch.toLowerCase().trim();
     const matchesSearch =
-      r.studentName.toLowerCase().includes(recordSearch.toLowerCase()) ||
-      r.studentId.toLowerCase().includes(recordSearch.toLowerCase()) ||
-      r.symptoms.some((s) => s.toLowerCase().includes(recordSearch.toLowerCase())) ||
-      r.treatmentDetail.toLowerCase().includes(recordSearch.toLowerCase());
+      !sTerm ||
+      (r.studentName || '').toLowerCase().includes(sTerm) ||
+      (r.studentId || '').toLowerCase().includes(sTerm) ||
+      (r.grade || '').toLowerCase().includes(sTerm) ||
+      (r.room || '').toLowerCase().includes(sTerm) ||
+      `${r.grade}/${r.room}`.toLowerCase().includes(sTerm) ||
+      (r.gender || '').toLowerCase().includes(sTerm) ||
+      (r.bloodType || '').toLowerCase().includes(sTerm) ||
+      (r.broughtBy || '').toLowerCase().includes(sTerm) ||
+      (r.companionName || '').toLowerCase().includes(sTerm) ||
+      (r.symptomDetail || '').toLowerCase().includes(sTerm) ||
+      (r.treatmentDetail || '').toLowerCase().includes(sTerm) ||
+      (r.medicationGiven || '').toLowerCase().includes(sTerm) ||
+      (r.careResult || '').toLowerCase().includes(sTerm) ||
+      (r.followUpNotes || '').toLowerCase().includes(sTerm) ||
+      (r.recordedBy || '').toLowerCase().includes(sTerm) ||
+      (r.parentContactName || '').toLowerCase().includes(sTerm) ||
+      (r.parentPhone || '').toLowerCase().includes(sTerm) ||
+      (r.id || '').toLowerCase().includes(sTerm) ||
+      (r.date || '').toLowerCase().includes(sTerm) ||
+      (r.academicYear || '').toLowerCase().includes(sTerm) ||
+      (Array.isArray(r.symptoms) && r.symptoms.some((s) => (s || '').toLowerCase().includes(sTerm))) ||
+      (Array.isArray(r.actionsTaken) && r.actionsTaken.some((a) => (a || '').toLowerCase().includes(sTerm)));
 
     const matchesGrade = recordGradeFilter === 'all' || r.grade === recordGradeFilter;
     const matchesStatus =

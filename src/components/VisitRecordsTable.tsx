@@ -128,11 +128,31 @@ export const VisitRecordsTable: React.FC<VisitRecordsTableProps> = ({
 
   // Filter records
   const filteredRecords = records.filter((r) => {
+    const sTerm = searchTerm.toLowerCase().trim();
     const matchesSearch =
-      r.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.symptoms.some((s) => s.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      r.treatmentDetail.toLowerCase().includes(searchTerm.toLowerCase());
+      !sTerm ||
+      (r.studentName || '').toLowerCase().includes(sTerm) ||
+      (r.studentId || '').toLowerCase().includes(sTerm) ||
+      (r.grade || '').toLowerCase().includes(sTerm) ||
+      (r.room || '').toLowerCase().includes(sTerm) ||
+      `${r.grade}/${r.room}`.toLowerCase().includes(sTerm) ||
+      (r.gender || '').toLowerCase().includes(sTerm) ||
+      (r.bloodType || '').toLowerCase().includes(sTerm) ||
+      (r.broughtBy || '').toLowerCase().includes(sTerm) ||
+      (r.companionName || '').toLowerCase().includes(sTerm) ||
+      (r.symptomDetail || '').toLowerCase().includes(sTerm) ||
+      (r.treatmentDetail || '').toLowerCase().includes(sTerm) ||
+      (r.medicationGiven || '').toLowerCase().includes(sTerm) ||
+      (r.careResult || '').toLowerCase().includes(sTerm) ||
+      (r.followUpNotes || '').toLowerCase().includes(sTerm) ||
+      (r.recordedBy || '').toLowerCase().includes(sTerm) ||
+      (r.parentContactName || '').toLowerCase().includes(sTerm) ||
+      (r.parentPhone || '').toLowerCase().includes(sTerm) ||
+      (r.id || '').toLowerCase().includes(sTerm) ||
+      (r.date || '').toLowerCase().includes(sTerm) ||
+      (r.academicYear || '').toLowerCase().includes(sTerm) ||
+      (Array.isArray(r.symptoms) && r.symptoms.some((s) => (s || '').toLowerCase().includes(sTerm))) ||
+      (Array.isArray(r.actionsTaken) && r.actionsTaken.some((a) => (a || '').toLowerCase().includes(sTerm)));
 
     const matchesGrade = gradeFilter === 'all' || r.grade === gradeFilter;
     const matchesStatus =

@@ -1,1 +1,113 @@
 @import "tailwindcss";
+
+/* -------------------------------------------------------------
+   PRINT MEDIA STYLES: Ensures crisp, complete, unclipped printing
+   Prevents background tinting, dark modals, and missing data.
+   ------------------------------------------------------------- */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-family: 'Prompt', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide interactive web elements, navigation, action buttons, and footers */
+  nav,
+  footer,
+  header,
+  button,
+  .no-print,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* 1. Sick Note Slip Printing: Isolate and display only the slip */
+  body.printing-slip *,
+  body:has(#printable-sick-note-slip) * {
+    visibility: hidden;
+  }
+
+  body.printing-slip #printable-sick-note-slip,
+  body.printing-slip #printable-sick-note-slip *,
+  body:has(#printable-sick-note-slip) #printable-sick-note-slip,
+  body:has(#printable-sick-note-slip) #printable-sick-note-slip * {
+    visibility: visible;
+  }
+
+  body.printing-slip #printable-sick-note-slip,
+  body:has(#printable-sick-note-slip) #printable-sick-note-slip {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 190mm !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 2px solid #1e293b !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    display: block !important;
+  }
+
+  /* 2. Parent Form Printing: Isolate and display only the official health form */
+  body.printing-parent-form *,
+  body:has(#printable-parent-form) * {
+    visibility: hidden;
+  }
+
+  body.printing-parent-form #printable-parent-form,
+  body.printing-parent-form #printable-parent-form *,
+  body:has(#printable-parent-form) #printable-parent-form,
+  body:has(#printable-parent-form) #printable-parent-form * {
+    visibility: visible;
+  }
+
+  body.printing-parent-form #printable-parent-form,
+  body:has(#printable-parent-form) #printable-parent-form {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 190mm !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 2px solid #1e293b !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    display: block !important;
+  }
+
+  /* Reset modal containers so they don't clip in print */
+  .print-modal-overlay {
+    position: static !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-modal-box {
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+}
